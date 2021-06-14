@@ -7,15 +7,17 @@ class App extends React.Component {
     error: "",
   };
 
-  getInfo = async (e) => {
+  getLocInfo = async (e) => {
     e.preventDefault();
     let cityName = e.target.cityName.value;
 
+    let serverURL = process.env.REACT_APP_SERVER;
+    let url = `${serverURL}/weather?lat=-33.87&lon=151.21&searchQuery=${cityName}`;
+
     try {
-      let data = await axios.get(
-        `https://eu1.locationiq.com/v1/search.php?key=pk.98e8463eaa916498acdf6dae4b49820e&q=${cityName}&format=json&limit=1`
-      );
+      let data = await axios.get(url);
       this.setState({ locationData: data.data[0], error: "" });
+      console.log(this.state.locationData);
     } catch {
       this.setState({ error: "There is an error" });
     }
@@ -24,7 +26,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <form onSubmit={this.getInfo}>
+        <form onSubmit={this.getLocInfo}>
           <input type="text" name="cityName" />
           <input type="submit" name="submit" value="submit" />
         </form>
@@ -32,17 +34,13 @@ class App extends React.Component {
         {/* if there is an erroror it will show me the erroror only, otherwise if there is data i will show the paragraphes and the image */}
 
         {this.state.error ? (
-          <p className="error">erroror: {this.state.error}</p>
+          <p>error: {this.state.error}</p>
         ) : (
           this.state.locationData && (
             <>
-              <p>Location: {this.state.locationData.display_name}</p>
-              <p>Latitude: {this.state.locationData.lat}</p>
-              <p>Longitude: {this.state.locationData.lon}</p>
-              <img
-                src={`https://maps.locationiq.com/v3/staticmap?key=pk.98e8463eaa916498acdf6dae4b49820e&center=${this.state.locationData.lat},${this.state.locationData.lon}&size=500x200&zoom=15&format=jpeg`}
-                alt="map"
-              />
+              <p>app_max_temp : {this.state.locationData.app_max_temp}</p>
+              <p>app_min_temp : {this.state.locationData.app_min_temp}</p>
+              <p>clouds : {this.state.locationData.clouds}</p>
             </>
           )
         )}
