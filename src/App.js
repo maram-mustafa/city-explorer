@@ -3,61 +3,49 @@ import axios from "axios";
 
 class App extends React.Component {
   state = {
-    locationData: {},
-    error: false,
-    cityName: "",
-    displayData: false,
+    locationData: "",
+    error: "",
   };
 
-  setCityName = (e) => {
+  getInfo = async (e) => {
     e.preventDefault();
-    console.log(e.target.value);
-    this.setState({
-      cityName: e.target.value,
-    });
-  };
-
-  getLocInfo = async (event) => {
-    event.preventDefault();
-    console.log(event);
+    let cityName = e.target.cityName.value;
 
     try {
       let data = await axios.get(
-        `https://eu1.locationiq.com/v1/search.php?key=pk.98e8463eaa916498acdf6dae4b49820e&q=${this.state.cityName}&format=json&limit=1`
+        `https://eu1.locationiq.com/v1/search.php?key=pk.98e8463eaa916498acdf6dae4b49820e&q=${cityName}&format=json&limit=1`
       );
-      this.setState({
-        locationData: data.data[0],
-        error: false,
-        displayData: true,
-      });
+      this.setState({ locationData: data.data[0], error: "" });
     } catch {
-      this.setState({ error: true });
+      this.setState({ error: "There is an error" });
     }
   };
 
   render() {
     return (
-      <div>
-        <form onSubmit={this.getLocInfo}>
-          <input
-            type="text"
-            name="cityName"
-            onChange={this.setCityName}
-          ></input>
-          <input type="submit" name="submit" value="submit"></input>
+      <div className="App">
+        <form onSubmit={this.getInfo}>
+          <input type="text" name="cityName" />
+          <input type="submit" name="submit" value="submit" />
         </form>
 
-        {(this.state.error && <p> Error:please enter correct city name </p>) ||
-          (this.state.displayData && (
+        {/* if there is an erroror it will show me the erroror only, otherwise if there is data i will show the paragraphes and the image */}
+
+        {this.state.error ? (
+          <p className="error">erroror: {this.state.error}</p>
+        ) : (
+          this.state.locationData && (
             <>
-              <p> Location: {this.state.locationData.display_name}</p>
-              <p>Latitude : {this.state.locationData.lat}</p>
+              <p>Location: {this.state.locationData.display_name}</p>
+              <p>Latitude: {this.state.locationData.lat}</p>
               <p>Longitude: {this.state.locationData.lon}</p>
               <img
-                src={`https://maps.locationiq.com/v3/staticmap?key=pk.98e8463eaa916498acdf6dae4b49820e&center=${this.state.locationData.lat},${this.state.locationData.lon}&format=jpeg`}
+                src={`https://maps.locationiq.com/v3/staticmap?key=pk.98e8463eaa916498acdf6dae4b49820e&center=${this.state.locationData.lat},${this.state.locationData.lon}&size=500x200&zoom=15&format=jpeg`}
+                alt="map"
               />
             </>
-          ))}
+          )
+        )}
       </div>
     );
   }
