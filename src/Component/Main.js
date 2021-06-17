@@ -21,7 +21,7 @@ export default class Main extends Component {
     axios
       .get(url)
       .then((data) => {
-        this.setState({ locationData: data.data, error: "" });
+        this.setState({ locationData: data.data[0], error: "" });
       })
       .catch((error) => {
         this.setState({ error: "There is an error" });
