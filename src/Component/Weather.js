@@ -28,8 +28,8 @@ export default class Weather extends Component {
     return (
       <div>
         <form onSubmit={this.getLocInfo}>
-          <input type="text" name="cityName" />
-          <input type="submit" name="submit" value="submit" />
+          <input className='input-area' type="text" name="cityName" />
+          <input  className='btn btn-primary' type="submit" name="submit" value="submit" />
         </form>
 
         {this.state.error ? (
